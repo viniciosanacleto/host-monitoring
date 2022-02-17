@@ -1,0 +1,28 @@
+version: '3.1'
+
+services:
+
+  prometheus:
+    image: bitnami/prometheus
+    restart: always
+    ports:
+      - 9090:9090
+    pid: host
+    volumes:
+      - "./prometheus-data:/opt/bitnami/prometheus/data"
+      - "./prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml"
+
+  grafana:
+    image: grafana/grafana-oss
+    restart: always
+    ports:
+      - 9091:3000
+
+  exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    command:
+      - '--path.rootfs=/host'
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
